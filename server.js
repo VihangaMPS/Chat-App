@@ -16,7 +16,7 @@ const LocalDB = process.env.DATABASE_LOCAL; // Mongo Local
 mongoose.connect(LocalDB).then(() => console.log('DB Connection successful!'));
 
 let count = 0;
-io.on('connection', (socket) => {
+io.on('connection', (socket) => { // Listing to 'connection' function
     console.log('New WebSocket Connection');
 
     socket.emit('countUpdated', count);
