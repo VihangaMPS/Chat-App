@@ -1,25 +1,25 @@
-const mongoose = require('mongoose');
-const dotenv = require("dotenv"); // use to get environment package
+const dotenv = require("dotenv");
 const http = require("http");
 const scoketio = require("socket.io");
 
-dotenv.config({path: './config.env'}); // applying custom environment variables to environment package
 const app = require('./app');
+dotenv.config({path: './config.env'}); // applying custom environment variables to environment package
 
 const server = http.createServer(app); // Creating the server manually bcuz we need to pass this server to socket
 const io = scoketio(server);
 
-
-
-// ================= DataBase Connection =================
-const LocalDB = process.env.DATABASE_LOCAL; // Mongo Local
-mongoose.connect(LocalDB).then(() => console.log('DB Connection successful!'));
 
 let count = 0;
 io.on('connection', (socket) => { // Listing to 'connection' function
     console.log('New WebSocket Connection');
 
     socket.emit('countUpdated', count);
+
+    socket.on('increment', () => {
+        count++
+        // socket.emit('countUpdated', count); // -> emit to a single connection
+        io.emit('countUpdated', count); // -> emit to all connection
+    })
 });
 
 // ====================== SERVER ======================
